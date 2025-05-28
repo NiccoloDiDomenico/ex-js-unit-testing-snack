@@ -1,4 +1,4 @@
-const { getInitials, createSlug, average, isPalindrome, findPostById } = require('./snacks.js');
+const { getInitials, createSlug, average, isPalindrome, findPostById, addPost, removePost } = require('./snacks.js');
 
 describe('Manipolazione di stringhe', () => {
     // Snack 1 
@@ -37,25 +37,29 @@ describe('Manipolazione di array e numeri', () => {
         expect(() => average([5, "5", 5])).toThrow();
     });
 
-    // Snack 7
-    const posts = [
-        {
-            id: 1,
-            title: "Il primo post",
-            slug: "il-primo-post"
-        },
-        {
-            id: 2,
-            title: "Il secondo post",
-            slug: "il-secondo-post"
-        },
-        {
-            id: 3,
-            title: "Il terzo post",
-            slug: "il-terzo-post"
-        }
-    ];
+    let posts;
 
+    beforeEach(() => {
+        posts = [
+            {
+                id: 1,
+                title: "Il primo post",
+                slug: "il-primo-post"
+            },
+            {
+                id: 2,
+                title: "Il secondo post",
+                slug: "il-secondo-post"
+            },
+            {
+                id: 3,
+                title: "Il terzo post",
+                slug: "il-terzo-post"
+            }
+        ];
+    })
+
+    // Snack 7
     test(`La funzione findPostById restituisce il post corretto dato l'array di post e l'id`, () => {
         expect(findPostById(posts, 1)).toBe(posts[0]);
         expect(() => findPostById(posts, "1")).toThrow();
@@ -63,4 +67,26 @@ describe('Manipolazione di array e numeri', () => {
         expect(() => findPostById(posts, 11)).toThrow();
         expect(() => findPostById("posts", 1)).toThrow();
     });
+
+    // Snack 8 (Bonus)
+    test("Dopo aver aggiunto un post con la funzione addPost, l'array posts deve contenere un elemento in più.", () => {
+        addPost(posts, { id: 4, title: "il quarto post", slug: "il-quarto-post" });
+        expect(posts).toHaveLength(4);
+    })
+
+    test("Dopo aver rimosso un post con la funzione removePost, l'array posts deve contenere un elemento in meno.", () => {
+        removePost(posts, 2);
+        expect(posts).toHaveLength(2);
+    })
+
+    // Snack 9 (Bonus)
+    test("Se si tenta di aggiungere un post con un id o uno slug già esistente, la funzione addPost deve lanciare un errore.", () => {
+        expect(() => addPost(posts, { id: 1, title: "Il primo post", slug: "il-primo-post" })).toThrow();
+        expect(() => addPost(posts, { id: 4, title: "Il quarto post", slug: "il-primo-post" })).toThrow();
+    })
+
+    // Snack 10 (Bonus)
+    test("Se viene passato un array di post come secondo argomento, la funzione createSlug incrementa di 1 se lo slug esiste già.", () => {
+        expect(createSlug("Il primo post", posts)).toBe("il-primo-post-1");
+    })
 });

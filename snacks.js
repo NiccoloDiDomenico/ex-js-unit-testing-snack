@@ -3,11 +3,16 @@ const getInitials = (fullName) => {
     return `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 }
 
-const createSlug = (string) => {
+const createSlug = (string, array) => {
     if (!string) {
         throw new Error("Inserire una stringa valida!");
     }
-    return string.toLowerCase().replaceAll(" ", "-");
+    let slug = string.toLowerCase().replaceAll(" ", "-");
+    let counter = 1;
+    if (array && array.some(post => post.slug === slug)) {
+        return slug + "-" + counter++;
+    }
+    return slug;
 }
 
 const average = (numbers) => {
@@ -34,10 +39,29 @@ const findPostById = (array, id) => {
     return array.find(elem => elem.id === id)
 }
 
+const addPost = (array, post) => {
+    const alreadyExistsId = array.some(existingPost => existingPost.id === post.id);
+    if (alreadyExistsId) {
+        throw new Error("Id già esistente");
+    }
+    const alreadyExistsSlug = array.some(existingPost => existingPost.slug === post.slug);
+    if (alreadyExistsSlug) {
+        throw new Error("Slug già esistente");
+    }
+    return array.push(post)
+}
+
+const removePost = (array, id) => {
+    const index = array.findIndex(post => post.id === id);
+    return array.splice(index, 1);
+}
+
 module.exports = {
     getInitials,
     createSlug,
     average,
     isPalindrome,
-    findPostById
+    findPostById,
+    addPost,
+    removePost
 }
